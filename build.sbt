@@ -9,6 +9,8 @@ ThisBuild / developers := List(
   // your GitHub handle and name
   tlGitHubDev("daenyth", "Gavin Bisesi")
 )
+// Not apache license, horrible file headers go away
+ThisBuild / tlCiHeaderCheck := false
 
 // publish to s01.oss.sonatype.org (set to true to publish to oss.sonatype.org instead)
 ThisBuild / tlSonatypeUseLegacyHost := false
