@@ -41,4 +41,20 @@ lazy val core = crossProject(JVMPlatform)
     )
   )
 
-lazy val docs = project.in(file("site")).enablePlugins(TypelevelSitePlugin)
+lazy val docs = project
+  .in(file("site"))
+  .enablePlugins(TypelevelSitePlugin)
+  .settings(
+    tlSiteHelium ~= {
+      import laika.helium.config._
+      _.site.mainNavigation(appendLinks =
+        Seq(
+          ThemeNavigationSection(
+            "Related Projects",
+            TextLink.external("https://typelevel.org/cats-effect/", "cats-effect"),
+            TextLink.external("https://guava.dev/", "Google guava")
+          )
+        )
+      )
+    }
+  )

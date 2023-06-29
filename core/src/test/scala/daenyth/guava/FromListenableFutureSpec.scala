@@ -19,11 +19,7 @@ package kibbles.guava
 
 import cats.effect.IO
 import cats.effect.testkit.TestControl
-import com.google.common.util.concurrent.{
-  AbstractFuture,
-  ListenableFuture,
-  MoreExecutors
-}
+import com.google.common.util.concurrent.{AbstractFuture, ListenableFuture, MoreExecutors}
 
 import java.util.concurrent.{CancellationException, Executors}
 import scala.concurrent.duration._
