@@ -4,11 +4,13 @@ ThisBuild / tlBaseVersion := "0.0" // your current series x.y
 ThisBuild / organization := "io.github.daenyth"
 ThisBuild / organizationName := "Daenyth"
 ThisBuild / startYear := Some(2023)
-ThisBuild / licenses := Seq(License.Apache2)
+ThisBuild / licenses := Seq(License.MIT)
 ThisBuild / developers := List(
   // your GitHub handle and name
   tlGitHubDev("daenyth", "Gavin Bisesi")
 )
+// Not apache license, horrible file headers go away
+ThisBuild / tlCiHeaderCheck := false
 
 // publish to s01.oss.sonatype.org (set to true to publish to oss.sonatype.org instead)
 ThisBuild / tlSonatypeUseLegacyHost := false
@@ -39,4 +41,22 @@ lazy val core = crossProject(JVMPlatform)
     )
   )
 
-lazy val docs = project.in(file("site")).enablePlugins(TypelevelSitePlugin)
+lazy val docs = project
+  .in(file("site"))
+  .enablePlugins(TypelevelSitePlugin)
+  .settings(
+    laikaTheme := {
+      import laika.helium.config._
+      tlSiteHelium.value.site
+        .mainNavigation(appendLinks =
+          Seq(
+            ThemeNavigationSection(
+              "Related Projects",
+              TextLink.external("https://typelevel.org/cats-effect/", "cats-effect"),
+              TextLink.external("https://guava.dev/", "Google guava")
+            )
+          )
+        )
+        .build
+    }
+  )
