@@ -15,9 +15,8 @@
  */
 
 package daenyth.guava
-package kibbles.guava
 
-import cats.effect.IO
+import cats.effect.{Async, IO}
 import cats.effect.testkit.TestControl
 import com.google.common.util.concurrent.{AbstractFuture, ListenableFuture, MoreExecutors}
 
@@ -73,6 +72,16 @@ class GuavaSpec extends munit.CatsEffectSuite {
 
     TestControl.executeEmbed(io).intercept[TestControl.NonTerminationException]
 
+  }
+
+  test("syntax on Async instance works") {
+    def lf() = lfService.submit(() => "syntax!")
+    Async[IO].fromListenableFuture(IO(lf())).assertEquals("syntax!")
+  }
+
+  test("syntax on IO object works") {
+    def lf() = lfService.submit(() => "syntax!")
+    IO.fromListenableFuture(IO(lf())).assertEquals("syntax!")
   }
 
   private def smallDelay: IO[Unit] = IO.sleep(100.millis)

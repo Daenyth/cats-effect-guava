@@ -16,7 +16,7 @@
 
 package daenyth
 
-import cats.effect.Async
+import cats.effect.{Async, IO}
 import cats.syntax.all._
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -26,7 +26,7 @@ import scala.util.control.NonFatal
 
 package object guava {
 
-  def fromListenableFuture[F[_], A](
+  private[guava] def fromListenableFuture[F[_], A](
       lfF: F[ListenableFuture[A]]
   )(implicit F: Async[F]): F[A] =
     F.async { cb =>
@@ -60,4 +60,14 @@ package object guava {
       }
 
     }
+
+  implicit class AsyncOps[F[_]](val F: Async[F]) extends AnyVal {
+    def fromListenableFuture[A](lfF: F[ListenableFuture[A]]): F[A] =
+      guava.fromListenableFuture[F, A](lfF)(F)
+  }
+
+  implicit class IOOps(val io: IO.type) extends AnyVal {
+    def fromListenableFuture[A](lfF: IO[ListenableFuture[A]]): IO[A] =
+      guava.fromListenableFuture[IO, A](lfF)
+  }
 }
