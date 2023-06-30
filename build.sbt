@@ -45,6 +45,7 @@ lazy val docs = project
   .in(file("site"))
   .enablePlugins(TypelevelSitePlugin)
   .settings(
+    description := "Cats-effect integration with guava ListenableFuture",
     laikaTheme := {
       import laika.helium.config._
       tlSiteHelium.value.site
