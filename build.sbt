@@ -32,7 +32,7 @@ lazy val core = crossProject(JVMPlatform)
   .settings(
     name := "cats-effect-guava",
     libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.9.0",
+      "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect" % catsEffectV,
       "org.typelevel" %%% "cats-effect-testkit" % catsEffectV % Test,
       "com.google.guava" % "guava" % "32.1.2-jre",
