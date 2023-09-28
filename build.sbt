@@ -22,7 +22,7 @@ val Scala213 = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213, "3.3.0", "2.12.18")
 ThisBuild / scalaVersion := Scala213 // the default Scala
 
-val catsEffectV = "3.5.1"
+val catsEffectV = "3.5.2"
 
 lazy val root = tlCrossRootProject.aggregate(core)
 
