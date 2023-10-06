@@ -20,7 +20,6 @@ import cats.effect.{Async, IO}
 import cats.syntax.all._
 import com.google.common.util.concurrent.ListenableFuture
 
-import java.util.concurrent.Executor
 import scala.concurrent.ExecutionException
 import scala.util.control.NonFatal
 
