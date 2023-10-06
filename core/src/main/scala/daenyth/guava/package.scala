@@ -30,9 +30,8 @@ package object guava {
       lfF: F[ListenableFuture[A]]
   )(implicit F: Async[F]): F[A] =
     F.async { cb =>
-      F.executionContext.flatMap { ec =>
+      F.executor.flatMap { executor =>
         lfF.flatMap { lf =>
-          val executor: Executor = (command: Runnable) => ec.execute(command)
           F.delay {
             lf.addListener(
               () =>
@@ -41,7 +40,7 @@ package object guava {
                   catch {
                     case ee: ExecutionException if ee.getCause != null =>
                       Left(ee.getCause)
-                    case NonFatal(e) => Left(e)
+                    case e if NonFatal(e) => Left(e)
                   }
                 ),
               executor
@@ -52,7 +51,7 @@ package object guava {
               case false =>
                 // failed to cancel - block until completion
                 F.async_[Unit] { cb =>
-                  lf.addListener(() => cb(Right(())), executor)
+                  lf.addListener(() => cb(Either.unit), executor)
                 }
             })
           }
