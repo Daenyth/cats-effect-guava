@@ -1,5 +1,5 @@
 // https://typelevel.org/sbt-typelevel/faq.html#what-is-a-base-version-anyway
-ThisBuild / tlBaseVersion := "0.1" // your current series x.y
+ThisBuild / tlBaseVersion := "0.2" // your current series x.y
 
 ThisBuild / organization := "io.github.daenyth"
 ThisBuild / organizationName := "Daenyth"
@@ -18,11 +18,11 @@ ThisBuild / tlSonatypeUseLegacyHost := false
 // publish website from this branch
 ThisBuild / tlSitePublishBranch := Some("main")
 
-val Scala213 = "2.13.11"
+val Scala213 = "2.13.12"
 ThisBuild / crossScalaVersions := Seq(Scala213, "3.3.0", "2.12.18")
 ThisBuild / scalaVersion := Scala213 // the default Scala
 
-val catsEffectV = "3.5.1"
+val catsEffectV = "3.5.2"
 
 lazy val root = tlCrossRootProject.aggregate(core)
 
@@ -35,7 +35,7 @@ lazy val core = crossProject(JVMPlatform)
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect" % catsEffectV,
       "org.typelevel" %%% "cats-effect-testkit" % catsEffectV % Test,
-      "com.google.guava" % "guava" % "32.1.2-jre",
+      "com.google.guava" % "guava" % "32.1.3-jre",
       "org.scalameta" %%% "munit" % "0.7.29" % Test,
       "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
     )

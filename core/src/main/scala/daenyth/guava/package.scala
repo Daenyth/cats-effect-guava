@@ -16,11 +16,11 @@
 
 package daenyth
 
-import cats.effect.{Async, IO}
+import cats.effect.{Async, IO, MonadCancelThrow, Cont}
+import cats.effect.syntax.all._
 import cats.syntax.all._
 import com.google.common.util.concurrent.ListenableFuture
 
-import java.util.concurrent.Executor
 import scala.concurrent.ExecutionException
 import scala.util.control.NonFatal
 
@@ -28,38 +28,39 @@ package object guava {
 
   private[guava] def fromListenableFuture[F[_], A](
       lfF: F[ListenableFuture[A]]
-  )(implicit F: Async[F]): F[A] =
-    F.async { cb =>
-      F.executionContext.flatMap { ec =>
-        lfF.flatMap { lf =>
-          val executor: Executor = (command: Runnable) => ec.execute(command)
-          F.delay {
-            lf.addListener(
-              () =>
-                cb(
-                  try Right(lf.get)
-                  catch {
-                    case ee: ExecutionException if ee.getCause != null =>
-                      Left(ee.getCause)
-                    case NonFatal(e) => Left(e)
-                  }
-                ),
-              executor
+  )(implicit F: Async[F]): F[A] = F.cont {
+    new Cont[F, A, A] {
+      def apply[G[_]](implicit G: MonadCancelThrow[G]) = { (resume, get, lift) =>
+        G.uncancelable { poll =>
+          G.flatMap(poll(lift(lfF))) { lf =>
+            val go = F.executor.flatMap { executor =>
+              F.delay {
+                lf.addListener(
+                  () =>
+                    resume(
+                      try Right(lf.get)
+                      catch {
+                        case ee: ExecutionException if ee.getCause != null =>
+                          Left(ee.getCause)
+                        case e if NonFatal(e) => Left(e)
+                      }
+                    ),
+                  executor
+                )
+              }
+            }
+
+            val await = poll(get).onCancel(
+              // if cannot cancel, fallback to get
+              lift(F.delay(lf.cancel(false))).ifM(G.unit, get.void)
             )
 
-            Some(F.delay(lf.cancel(false)).flatMap {
-              case true  => F.unit
-              case false =>
-                // failed to cancel - block until completion
-                F.async_[Unit] { cb =>
-                  lf.addListener(() => cb(Right(())), executor)
-                }
-            })
+            lift(go) *> await
           }
         }
       }
-
     }
+  }
 
   implicit class AsyncOps[F[_]](val F: Async[F]) extends AnyVal {
     def fromListenableFuture[A](lfF: F[ListenableFuture[A]]): F[A] =
