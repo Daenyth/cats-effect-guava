@@ -35,7 +35,7 @@ lazy val core = crossProject(JVMPlatform)
       "org.typelevel" %%% "cats-core" % "2.10.0",
       "org.typelevel" %%% "cats-effect" % catsEffectV,
       "org.typelevel" %%% "cats-effect-testkit" % catsEffectV % Test,
-      "com.google.guava" % "guava" % "32.1.3-jre",
+      "com.google.guava" % "guava" % "33.1.0-jre",
       "org.scalameta" %%% "munit" % "0.7.29" % Test,
       "org.typelevel" %%% "munit-cats-effect-3" % "1.0.7" % Test
     )
